@@ -19,6 +19,9 @@ export default class App extends Component<{}> {
     super();
     test();
     app = this;
+    this.state = {
+      displayTxt1:'2nd element of the list'
+    }
   }
 
   _startXMLProcess(){
@@ -27,6 +30,9 @@ export default class App extends Component<{}> {
     processXML({travel, file})
     .then((json)=>{
       console.log(json);
+      this.setState({
+        displayTxt1: json.CATALOG.CD[2].TITLE
+      })
     })
     .catch((error)=>{
       console.log(error);
@@ -42,6 +48,7 @@ export default class App extends Component<{}> {
         title='Start process on XML file'
         color='#841584'
         />
+        <Text> {this.state.displayTxt1}</Text>
       </View>
     );
   }
