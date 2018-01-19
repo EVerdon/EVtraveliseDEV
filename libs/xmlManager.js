@@ -34,7 +34,7 @@ function processXML(payload){
     if(res.code == 0){
       //download ok
       readXml(res.path).then((xmlContent)=>{
-          
+        validateXML('a', 'b');
       })
       .catch((err)=>{
         //TODO améliorer gestion des erreurs, Throw ?
@@ -54,7 +54,7 @@ function processXML(payload){
 //INTERNAL FUNCTIONS
 
 //Fetch XML from 'xmlURL' to 'path'
-//  returns promise
+//  returns promise of the result code with a description
 function fetchXML(xmlURL, savePath){
   console.log('xmlFetch started to path : '+savePath);
   return new Promise((resolve, reject) =>{
@@ -79,7 +79,7 @@ function fetchXML(xmlURL, savePath){
 });
 }
 
-//readXml :  reads XML file and returns xml as string
+//readXml :  reads XML file from 'path' and returns promise of xml as string
 function readXml(savePath){
   return new Promise((resolve, reject)=>{
     RNFetchBlob.fs.readFile(savePath, 'utf8')
@@ -90,6 +90,12 @@ function readXml(savePath){
      reject(err);
    })
   })
+}
+
+//Validates XML with schema
+function validateXML(xmlString, schema){
+  //TODO validation du fichier XML avec XSD
+
 }
 
 module.exports = {
