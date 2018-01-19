@@ -15,8 +15,9 @@ function test(){
 //Manages the process of :
 //  Saving XML locally
 //    Validating the XML with XSD
-//      Returning XML to JSON
+//      Get JSON from local XML file
 //        Removing local copy of the XML
+//          return JSON
 //Returns a promise
 function processXML(payload){
   const {travel, file} = payload;
@@ -34,7 +35,25 @@ function processXML(payload){
     if(res.code == 0){
       //download ok
       readXml(res.path).then((xmlContent)=>{
-        validateXML('a', 'b');
+        validateXML(xmlContent, 'xsd')
+        .then((res)=>{
+          console.log(res)
+          //TODO React to XML validation returned value (true/false)
+          if(res.code == 0){
+            console.log('XML is valid');
+            console.log(res.xml);
+            parseXMLtoJSON(res.xml)
+            .then((data) =>{
+              console.log(data.jsonval);
+              console.log(JSON.stringify(data.jsonval));
+            })
+          }else{
+            console.error('XML is not valid')
+          }
+        })
+        .catch((err)=>{
+
+        })
       })
       .catch((err)=>{
         //TODO améliorer gestion des erreurs, Throw ?
@@ -93,9 +112,37 @@ function readXml(savePath){
 }
 
 //Validates XML with schema
+//returns 'true' if xml is valid
+//returns 'false' if xml is not valid
 function validateXML(xmlString, schema){
   //TODO validation du fichier XML avec XSD
+  return new Promise((resolve, reject)=>{
+    resolve({code: 0, xml: xmlString});
+  })
 
+}
+
+//TODO comment
+function parseXMLtoJSON(xmlText){
+  var parseString = require('react-native-xml2js').parseString;
+  let returnVal = {
+    code: 1,
+    jsonval: null,
+    description: 'undefined'};
+
+    return new Promise(function(resolve, reject){
+      parseString(xmlText, function(err, result){
+        if(result && result !== ''){
+          returnVal.code = 0;
+          returnVal.description = 'success';
+          returnVal.jsonval = result;
+          resolve(returnVal);
+        }else{
+          returnVal.description = "Couldn't parse XML to JSObject";
+          reject(returnVal);
+        }
+      })
+    })
 }
 
 module.exports = {
