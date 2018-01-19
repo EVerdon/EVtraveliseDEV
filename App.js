@@ -24,7 +24,13 @@ export default class App extends Component<{}> {
   _startXMLProcess(){
     var travel = {id:'X', version:1};
     var file = {id:'Z'};
-    processXML({travel, file});
+    processXML({travel, file})
+    .then((json)=>{
+      console.log(json);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
   }
 
   render() {

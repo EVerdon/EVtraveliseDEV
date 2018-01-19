@@ -17,8 +17,7 @@ function test(){
 //    Validating the XML with XSD
 //      Get JSON from local XML file
 //        Removing local copy of the XML
-//          return JSON
-//Returns a promise
+//Returns a promise with JsObject
 function processXML(payload){
   const {travel, file} = payload;
 
@@ -27,46 +26,49 @@ function processXML(payload){
 
   //TODO Temporary xmlURL build with travel object properties to implement
   let xmlURL = 'https://www.w3schools.com/xml/note.xml';
-
+return new Promise((resolve, reject)=>{
   //Preparing function calls
   let fetchPromise = fetchXML(xmlURL, xmlSavePath);
-
-  fetchPromise.then((res) =>{
-    if(res.code == 0){
-      //download ok
-      readXml(res.path).then((xmlContent)=>{
+//-SAVE XML IN LOCAL FS
+  fetchPromise.then((resFetch) =>{
+    if(resFetch.code == 0){
+//----GET XML FILE CONTENT
+      readXml(resFetch.path).then((xmlContent)=>{
+//------VALIDATING XML CONTENT WITH XSD
         validateXML(xmlContent, 'xsd')
-        .then((res)=>{
-          console.log(res)
+        .then((resValidate)=>{
           //TODO React to XML validation returned value (true/false)
-          if(res.code == 0){
-            console.log('XML is valid');
-            console.log(res.xml);
-            parseXMLtoJSON(res.xml)
-            .then((data) =>{
-              console.log(data.jsonval);
-              console.log(JSON.stringify(data.jsonval));
+          if(resValidate.code == 0){
+//----------GET JSobject FROM SAVED XML FILE
+            parseXMLtoJSON(resValidate.xml)
+            .then((resParse) =>{
+//------------DELETING LOCAL XML FILE
+              deleteLocalXMLCopy(resFetch.path)
+              .then((resDel)=>{
+                if(resDel){
+//----------------OUPUT : JsObject from XML
+                  resolve(resParse.jsonval);
+                }else{
+                  throw new Error("XMl file wasn't properly deleted");
+                }
+              })
             })
           }else{
-            console.error('XML is not valid')
+            throw new Error('XML not valid');
           }
         })
-        .catch((err)=>{
-
-        })
-      })
-      .catch((err)=>{
-        //TODO améliorer gestion des erreurs, Throw ?
-        console.error(err);
+        .catch((err=>{
+          throw new Error('error during validation');
+        }))
       })
     }else{
-      //download nok
-      console.error('download nok')
+      throw new Error ('Failed to download XML source');
     }
   })
   .catch((err)=>{
-    console.error(err.code);
-    console.error(err.description);
+//--OUTPUT if an error was thrown
+    reject(err);
+  })
   })
 }
 //-------------------------------
@@ -75,7 +77,6 @@ function processXML(payload){
 //Fetch XML from 'xmlURL' to 'path'
 //  returns promise of the result code with a description
 function fetchXML(xmlURL, savePath){
-  console.log('xmlFetch started to path : '+savePath);
   return new Promise((resolve, reject) =>{
     let fetchEnded = false;
 
@@ -89,7 +90,6 @@ function fetchXML(xmlURL, savePath){
         reject({code: 1, description: 'Download failed' + res.respInfo.status});
         return;
       }
-      console.log(res.path());
       resolve({code: 0, description: 'Download succeeded', path:res.path()});
     }).catch((err) => {
       fetchEnded = true;
@@ -118,11 +118,13 @@ function validateXML(xmlString, schema){
   //TODO validation du fichier XML avec XSD
   return new Promise((resolve, reject)=>{
     resolve({code: 0, xml: xmlString});
+    //reject({code: 1, xml: ''});
   })
 
 }
 
-//TODO comment
+//Parse XML string 'xmlText' to Javascript object
+//Returns the object created
 function parseXMLtoJSON(xmlText){
   var parseString = require('react-native-xml2js').parseString;
   let returnVal = {
@@ -143,6 +145,15 @@ function parseXMLtoJSON(xmlText){
         }
       })
     })
+}
+
+//TODO comment
+function deleteLocalXMLCopy(path){
+  return new Promise((resolve, reject)=>{
+    RNFetchBlob.fs.unlink(path)
+    .then(() => { resolve(true); })
+    .catch((err) => { reject(false); })
+  })
 }
 
 module.exports = {
