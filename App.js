@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import xmlManager, { test, processXML } from './libs/xmlManager';
 const config={
-  'xmlURL':'http://www.localhost:8888/voyage1.xml'
+  'xmlURL':'https://www.w3schools.com/xml/note.xml'
 }
 
 export default class App extends Component<{}> {

@@ -14,13 +14,17 @@ function test(){
 function processXML(xmlURL, path){
   console.log('process started on xmlURL : '+xmlURL);
   let xmlSavePath = RNFetchBlob.fs.dirs.DocumentDir + '/tempXML.xml';
-  fetchXML(xmlURL, xmlSavePath)
-  .then(res=>{
-    console.log(res);
+  let fetchPromise = fetchXML(xmlURL, xmlSavePath);
+
+
+  fetchPromise.then(res=>{
+    if(res.code == 0){
+      console.log('code 0');
+    }
   })
-  .catch((code, description)=>{
-    console.log(code);
-    console.log(description);
+  .catch((err)=>{
+    console.error(err.code);
+    console.error(err.description);
   })
 }
 
@@ -42,12 +46,11 @@ function fetchXML(xmlURL, savePath){
       if(res.respInfo.status !== 200){
         reject({code: 1, description: 'Download failed' + res.respInfo.status});
         return;
-        // TODO : tester un throw error à la place
       }
-      resolve({code: 2, description: 'Download succeeded'});
-    }).catch((errorMessage, statusCode)=>{
+      resolve({code: 0, description: 'Download succeeded'});
+    }).catch((err) => {
       fetchEnded = true;
-      reject({code: 3, description: 'Download error ' + statusCode});
+      reject({code: 0, description: 'Download failed : ' + err});
     });
 });
 }
