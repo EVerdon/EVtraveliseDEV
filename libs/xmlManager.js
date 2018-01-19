@@ -12,7 +12,7 @@ function test(){
   console.log('xmlManager correctly imported');
 }
 
-//Manages the process of :
+//Manages the asynchronous process of :
 //  Saving XML locally
 //    Validating the XML with XSD
 //      Get JSON from local XML file
@@ -147,7 +147,9 @@ function parseXMLtoJSON(xmlText){
     })
 }
 
-//TODO comment
+//Deletes local XML at 'path'
+//Returns 'false' if an error was thrown otherwise returns 'true'
+//Returns 'true' if no file were deleted but no errors where thrown
 function deleteLocalXMLCopy(path){
   return new Promise((resolve, reject)=>{
     RNFetchBlob.fs.unlink(path)
