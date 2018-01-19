@@ -1,4 +1,10 @@
 import RNFetchBlob from 'react-native-fetch-blob';
+//Code values
+// 0 = executed correctly
+// >0 = error
+
+
+//-------------------------------
 //EXPORTS
 
 //Confirms load in the console
@@ -11,15 +17,32 @@ function test(){
 //    Validating the XML with XSD
 //      Returning XML to JSON
 //        Removing local copy of the XML
-function processXML(xmlURL, path){
-  console.log('process started on xmlURL : '+xmlURL);
-  let xmlSavePath = RNFetchBlob.fs.dirs.DocumentDir + '/tempXML.xml';
+//Returns a promise
+function processXML(payload){
+  const {travel, file} = payload;
+
+  //TODO Maybe use sanitize and adapt path
+  let xmlSavePath = RNFetchBlob.fs.dirs.DocumentDir + '/' + travel.id + '.xml';
+
+  //TODO Temporary xmlURL build with travel object properties to implement
+  let xmlURL = 'https://www.w3schools.com/xml/note.xml';
+
+  //Preparing function calls
   let fetchPromise = fetchXML(xmlURL, xmlSavePath);
 
-
-  fetchPromise.then(res=>{
+  fetchPromise.then((res) =>{
     if(res.code == 0){
-      console.log('code 0');
+      //download ok
+      readXml(res.path).then((xmlContent)=>{
+          
+      })
+      .catch((err)=>{
+        //TODO améliorer gestion des erreurs, Throw ?
+        console.error(err);
+      })
+    }else{
+      //download nok
+      console.error('download nok')
     }
   })
   .catch((err)=>{
@@ -27,7 +50,7 @@ function processXML(xmlURL, path){
     console.error(err.description);
   })
 }
-
+//-------------------------------
 //INTERNAL FUNCTIONS
 
 //Fetch XML from 'xmlURL' to 'path'
@@ -47,12 +70,26 @@ function fetchXML(xmlURL, savePath){
         reject({code: 1, description: 'Download failed' + res.respInfo.status});
         return;
       }
-      resolve({code: 0, description: 'Download succeeded'});
+      console.log(res.path());
+      resolve({code: 0, description: 'Download succeeded', path:res.path()});
     }).catch((err) => {
       fetchEnded = true;
-      reject({code: 0, description: 'Download failed : ' + err});
+      reject({code: 2, description: 'Download failed : ' + err});
     });
 });
+}
+
+//readXml :  reads XML file and returns xml as string
+function readXml(savePath){
+  return new Promise((resolve, reject)=>{
+    RNFetchBlob.fs.readFile(savePath, 'utf8')
+   .then((data)=>{
+     resolve(data);
+   })
+   .catch((err)=>{
+     reject(err);
+   })
+  })
 }
 
 module.exports = {

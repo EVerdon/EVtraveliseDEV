@@ -22,7 +22,9 @@ export default class App extends Component<{}> {
   }
 
   _startXMLProcess(){
-    processXML(config.xmlURL);
+    var travel = {id:'X', version:1};
+    var file = {id:'Z'};
+    processXML({travel, file});
   }
 
   render() {
