@@ -26,76 +26,70 @@ function processXML(payload){
 
   //TODO Temporary xmlURL build with travel object properties to implement
   let xmlURL = 'https://www.w3schools.com/xml/cd_catalog.xml';
-return new Promise((resolve, reject)=>{
-  //Preparing function calls
-  let fetchPromise = fetchXML(xmlURL, xmlSavePath);
-//-SAVE XML IN LOCAL FS
-  fetchPromise.then((resFetch) =>{
-    if(resFetch.code == 0){
-//----GET XML FILE CONTENT
-      readXml(resFetch.path).then((xmlContent)=>{
-//------VALIDATING XML CONTENT WITH XSD
-        validateXML(xmlContent, 'xsd')
-        .then((resValidate)=>{
-          //TODO React to XML validation returned value (true/false)
-          if(resValidate.code == 0){
-//----------GET JSobject FROM SAVED XML FILE
-            parseXMLtoJSON(resValidate.xml)
-            .then((resParse) =>{
-//------------DELETING LOCAL XML FILE
-              deleteLocalXMLCopy(resFetch.path)
-              .then((resDel)=>{
-                if(resDel){
-//----------------OUPUT : JsObject from XML
-                  resolve(resParse.jsonval);
-                }else{
-                  throw new Error("XMl file wasn't properly deleted");
-                }
-              })
-            })
-          }else{
-            throw new Error('XML not valid');
-          }
-        })
-        .catch((err=>{
-          throw new Error('error during validation');
-        }))
-      })
-    }else{
-      throw new Error ('Failed to download XML source');
+
+  console.log('check1');
+  return new Promise((resolve, reject)=>{
+    console.log('check2');
+    var t = fetchXML(xmlURL, xmlSavePath);
+    console.log(t);
+    return t;
+  }).then(function(resFetch){
+    console.log('check3');
+    return readXml(resFetch.path);
+  }).then(function(xmlContent){
+    console.log('check4');
+    return validateXML(xmlContent, 'xsd');
+  }).then(function(resValidate){
+    console.log('check5');
+    if(resValidate.code == 0){
+      return parseXMLtoJSON(resValidate.xml);
     }
+  }).then(function(resParse){
+    console.log('check6');
+    return deleteLocalXMLCopy(resFetch.path);//error undefined !!
+  }).then(function(resDel){
+    if(resDel){
+      resolve(resParse.jsonval);
+    }else{
+      throw new Error ('failed');
+    }
+  }).catch(err=>{
+    console.log('Error : '+ err);
   })
-  .catch((err)=>{
-//--OUTPUT if an error was thrown
-    reject(err);
-  })
-  })
-}
+  }
 //-------------------------------
 //INTERNAL FUNCTIONS
 
 //Fetch XML from 'xmlURL' to 'path'
 //  returns promise of the result code with a description
 function fetchXML(xmlURL, savePath){
-  return new Promise((resolve, reject) =>{
+  let fetchEnded = false;
+  return RNFetchBlob
+  .config({
+    path: savePath
+  })
+  .fetch('GET', xmlURL, {'Cache-Control':'no-store'})
+  
+  /*return new Promise(function(resolve, reject){
     let fetchEnded = false;
-
-    const promise = RNFetchBlob.config({
+    RNFetchBlob
+    .config({
       path: savePath
-    }).fetch('GET', xmlURL, {'Cache-Control':'no-store'});
-
-    promise.then(res => {
+    })
+    .fetch('GET', xmlURL, {'Cache-Control':'no-store'})
+    .then(function (res){
+      console.log('fetch2');
       fetchEnded = true;
       if(res.respInfo.status !== 200){
         reject({code: 1, description: 'Download failed' + res.respInfo.status});
-        return;
       }
+      console.log('fetch3');
       resolve({code: 0, description: 'Download succeeded', path:res.path()});
     }).catch((err) => {
       fetchEnded = true;
       reject({code: 2, description: 'Download failed : ' + err});
     });
-});
+});*/
 }
 
 //readXml :  reads XML file from 'path' and returns promise of xml as string
