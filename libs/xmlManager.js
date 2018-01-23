@@ -25,7 +25,7 @@ function processXML(payload){
   let xmlSavePath = RNFetchBlob.fs.dirs.DocumentDir + '/' + travel.id + '.xml';
 
   //TODO Temporary xmlURL build with travel object properties to implement
-  let xmlURL = 'https://www.w3schools.com/xml/cd_catalog.xml';
+  let xmlURL = 'http://www.localhost:8888/data/voyage1.xml';
 return new Promise((resolve, reject)=>{
   //Preparing function calls
   let fetchPromise = fetchXML(xmlURL, xmlSavePath);
@@ -82,7 +82,7 @@ function fetchXML(xmlURL, savePath){
 
     const promise = RNFetchBlob.config({
       path: savePath
-    }).fetch('GET', xmlURL, {'Cache-Control':'no-store'});
+    }).fetch('GET', xmlURL, {'Cache-Control':'no-store', 'Authorization' : 'Basic '+btoa('root:root')});
 
     promise.then(res => {
       fetchEnded = true;

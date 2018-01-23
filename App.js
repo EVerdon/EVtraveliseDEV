@@ -10,9 +10,7 @@ import {
   Button
 } from 'react-native';
 import xmlManager, { test, processXML } from './libs/xmlManager';
-const config={
-  'xmlURL':'https://www.w3schools.com/xml/note.xml'
-}
+
 
 export default class App extends Component<{}> {
   constructor(){
@@ -31,7 +29,7 @@ export default class App extends Component<{}> {
     .then((json)=>{
       console.log(json);
       this.setState({
-        displayTxt1: json.CATALOG.CD[2].TITLE
+        displayTxt1: json.ROOTNODE.VOYAGE[0].NOM[2]
       })
     })
     .catch((error)=>{
