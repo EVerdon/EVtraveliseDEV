@@ -32,7 +32,6 @@ function processXML(payload){
       finalJSON = jsonResult;
       return deleteLocalXMLCopy(payload.xml.savePath);
     }).then(function(deleteResult){
-      console.log(finalJSON);
       resolve(finalJSON);
     })
     .catch(error=>{
@@ -49,7 +48,7 @@ function processXML(payload){
 function fetchXML(xmlURL, xmlSavePath){
     return RNFetchBlob
     .config({path: xmlSavePath})
-    .fetch('GET', xmlURL, {'Cache-Control':'no-store'})
+    .fetch('GET', xmlURL, {'Cache-Control':'no-store', 'Authorization' : 'Basic '+btoa('root:root')})
 }
 
 function readXml(savePath){

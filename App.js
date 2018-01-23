@@ -24,15 +24,16 @@ export default class App extends Component<{}> {
 
   _startXMLProcess(){
     let payload = {
-      'xml' : {'url' : 'https://www.w3schools.com/xml/cd_catalog.xml'},
+      'xml' : {'url' : 'http://localhost:8888/data/voyage1.xml'},
       'travel' : {id:'X', version:1},
       'file' : {id:'Z'}
     }
     processXML(payload).then(function(result){
-      console.log(result);
       app.setState({
-        displayText: result.CATALOG.CD[5].TITLE
+        displayText: result.ROOTNODE.VOYAGE[0].NOM[0]
       })
+    }).catch(err=>{
+      console.log(err);
     });
 
   }
