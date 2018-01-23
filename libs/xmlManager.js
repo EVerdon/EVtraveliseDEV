@@ -1,5 +1,5 @@
 import RNFetchBlob from 'react-native-fetch-blob';
-//EXPORTS
+//EXPORTS ET TEST
 
 //Confirms load in the console
 function test(){
