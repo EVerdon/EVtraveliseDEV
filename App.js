@@ -29,7 +29,7 @@ export default class App extends Component<{}> {
     .then((json)=>{
       console.log(json);
       this.setState({
-        displayTxt1: json.ROOTNODE.VOYAGE[0].NOM[2]
+        displayTxt1: json.ROOTNODE.VOYAGE[0].NOM[0]
       })
     })
     .catch((error)=>{

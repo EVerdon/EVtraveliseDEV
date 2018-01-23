@@ -25,7 +25,7 @@ function processXML(payload){
   let xmlSavePath = RNFetchBlob.fs.dirs.DocumentDir + '/' + travel.id + '.xml';
 
   //TODO Temporary xmlURL build with travel object properties to implement
-  let xmlURL = 'http://www.localhost:8888/data/voyage1.xml';
+  let xmlURL = 'http://localhost:8888/data/voyage1.xml';
 return new Promise((resolve, reject)=>{
   //Preparing function calls
   let fetchPromise = fetchXML(xmlURL, xmlSavePath);
