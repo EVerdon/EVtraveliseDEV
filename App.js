@@ -22,7 +22,12 @@ export default class App extends Component<{}> {
   }
 
   _startXMLProcess(){
-    processXML(config.xmlURL);
+    let payload = {
+      'xml' : {'url' : 'https://www.w3schools.com/xml/cd_catalog.xml'},
+      'travel' : {id:'X', version:1},
+      'file' : {id:'Z'}
+    }
+    processXML(payload);
   }
 
   render() {
