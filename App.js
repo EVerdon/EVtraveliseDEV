@@ -10,15 +10,16 @@ import {
   Button
 } from 'react-native';
 import xmlManager, { test, processXML } from './libs/xmlManager';
-const config={
-  'xmlURL':'https://www.w3schools.com/xml/note.xml'
-}
+
 
 export default class App extends Component<{}> {
   constructor(){
     super();
     test();
     app = this;
+    app.state = {
+      displayText:'json element will be displayed here'
+    }
   }
 
   _startXMLProcess(){
@@ -27,7 +28,13 @@ export default class App extends Component<{}> {
       'travel' : {id:'X', version:1},
       'file' : {id:'Z'}
     }
-    processXML(payload);
+    processXML(payload).then(function(result){
+      console.log(result);
+      app.setState({
+        displayText: result.CATALOG.CD[5].TITLE
+      })
+    });
+
   }
 
   render() {
@@ -39,6 +46,7 @@ export default class App extends Component<{}> {
         title='Start process on XML file'
         color='#841584'
         />
+        <Text>{this.state.displayText}</Text>
       </View>
     );
   }
