@@ -5,7 +5,6 @@ import RNFetchBlob from 'react-native-fetch-blob';
 function test(){
   console.log('xmlManager correctly imported');
 }
-
 //Manages the process of :
 //  Saving XML locally
 //    Validating the XML with XSD
@@ -47,7 +46,7 @@ function processXML(payload){
 //  returns promise
 function fetchXML(xmlURL, xmlSavePath){
     return RNFetchBlob
-    .config({path: xmlSavePath})
+    .config({path: xmlSavePath, trusty: true})
     .fetch('GET', xmlURL, {'Cache-Control':'no-store', 'Authorization' : 'Basic '+btoa('root:root')})
 }
 

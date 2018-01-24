@@ -24,7 +24,8 @@ export default class App extends Component<{}> {
 
   _startXMLProcess(){
     let payload = {
-      'xml' : {'url' : 'http://localhost:8888/data/voyage1.xml'},
+      //'xml' : {'url' : 'http://localhost/data/voyage1.xml'}, // config standard
+      'xml' : {'url' : 'https://localhost/data/voyage1.xml'}, // config ssl
       'travel' : {id:'X', version:1},
       'file' : {id:'Z'}
     }
